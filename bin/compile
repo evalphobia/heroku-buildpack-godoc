@@ -52,7 +52,14 @@ else
     mkdir -p $cache/$goversion
     cd $cache/$goversion
     file=$goversion.linux-amd64.tar.gz
-    gourl=https://storage.googleapis.com/golang/$file
+    case $goversion in
+    go1.0*|go1.1beta*|go1.1rc*|go1.1|go1.1.*|go1.2beta*|go1.2rc*|go1.2|go1.2.1)
+        gourl=http://go.googlecode.com/files/$file
+        ;;
+    *)
+        gourl=https://storage.googleapis.com/golang/$file
+        ;;
+    esac
     echo -n "-----> Installing $gourl"
     curl -sO $gourl
     tar zxf $file
