@@ -90,9 +90,11 @@ cp -R $cache/$goversion/go/* $GOROOT
 # Get repos to document
 unset GIT_DIR # unset git dir or it will mess with goinstall
 PATH=$GOROOT/bin:$PATH
-while read line; do
-    echo "-----> Running: go get -d -u $line"
-    go get -d -u $line
+while read -r || [[ -n "$REPLY" ]]; do
+    if ! [ -z "$REPLY" ]; then # If the line is not empty
+        echo "-----> Running: go get -d -u $REPLY"
+        go get -d -u $REPLY
+    fi
 done < $build/.godoc
 
 # Create executable
