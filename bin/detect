@@ -2,7 +2,6 @@
 # bin/detect <build-dir>
 set -e
 
-echo "-----> Running: $0 $1"
 if test -f $1/.godoc
 then echo Godoc
 else
