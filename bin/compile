@@ -1,0 +1,81 @@
+#!/bin/bash
+# usage: bin/compile <build-dir> <cache-dir>
+
+set -eo pipefail
+
+echo "-----> Running: $0 $1 $2"
+mkdir -p "$1" "$2"
+build=$(cd "$1/" && pwd)
+cache=$(cd "$2/" && pwd)
+
+
+# Python
+mkdir -p $cache/pip
+python=python2.7
+
+# Install Go
+goversion=go${GOVERSION:-1.3}
+if test -d $cache/$goversion/go
+then
+    echo    "-----> Using $goversion (Specify a different goversion with GOVERSION=1.x)"
+else
+    rm -rf $cache/* # be sure not to build up cruft
+    mkdir -p $cache/$goversion
+    cd $cache/$goversion
+    file=$goversion.linux-amd64.tar.gz
+    gourl=https://storage.googleapis.com/golang/$file
+    echo -n "-----> Installing $gourl"
+    curl -sO $gourl
+    tar zxf $file
+    rm -f $file
+    echo    "       done"
+fi
+
+# Install Mercurial
+if ! (which hg >/dev/null)
+then
+    echo -n "       Installing Mercurial..."
+    pip install mercurial > /dev/null 2>&1
+    echo    "       done"
+fi
+
+# Install Bazaar
+if ! (which bzr >/dev/null)
+then
+    echo -n "       Installing Bazaar..."
+    pip install bzr > /dev/null 2>&1
+    echo    "       done"
+fi
+
+# Setup Go env
+# If GOROOT is in the project root then godoc will fail so
+# we insert an additional directory to keep things running.
+# See https://code.google.com/p/go/issues/detail?id=6925
+GOROOT=$build/_go/goroot export GOROOT
+GOPATH=$GOROOT/gopath export GOPATH
+
+mkdir -p $GOROOT
+cp -R $cache/$ver/go/* $GOROOT
+
+
+# Get repos to document
+unset GIT_DIR # unset git dir or it will mess with goinstall
+PATH=$GOROOT/bin:$PATH
+while read p; do
+    echo "-----> Running: go get -d -u $p"
+    go get -d -u $p
+done < $build/.godoc
+
+# Create executable
+echo "-----> Creating: $HOME/bin/web"
+mkdir -p $build/bin
+echo '#!/bin/bash' > $build/bin/web
+echo 'godoc -http=:$PORT' >> $build/bin/web
+chmod +x $build/bin/web
+
+# Set up app env
+mkdir -p $build/.profile.d
+echo 'export GOROOT=$HOME/_go/goroot' > $build/.profile.d/go.sh
+echo 'export GOPATH=$GOROOT/gopath' >> $build/.profile.d/go.sh
+echo 'PATH=$PATH:$HOME/bin:$GOROOT/bin' >> $build/.profile.d/go.sh
+

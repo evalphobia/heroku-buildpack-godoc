@@ -1,0 +1,5 @@
+#!/bin/bash
+# bin/release <build-dir>
+
+echo "-----> Running: $0 $1"
+echo "--- {}"
