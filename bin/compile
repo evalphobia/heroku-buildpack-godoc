@@ -1,11 +1,15 @@
 #!/bin/bash
-# usage: bin/compile <build-dir> <cache-dir>
+# usage: bin/compile <build-dir> <cache-dir> <env-dir>
 
 set -eo pipefail
 
 mkdir -p "$1" "$2"
 build=$(cd "$1/" && pwd)
 cache=$(cd "$2/" && pwd)
+envdir=$(cd "$3/" && pwd)
+for key in GOVERSION; do
+  [ -f $envdir/$key ] && export "$key=$(cat $envdir/$key)"
+done
 
 buildpack=$(dirname $(dirname $0))
 arch=$(uname -m|tr A-Z a-z)
