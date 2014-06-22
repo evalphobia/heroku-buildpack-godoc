@@ -91,12 +91,12 @@ cp -R $cache/$goversion/go/* $GOROOT
 unset GIT_DIR # unset git dir or it will mess with goinstall
 PATH=$GOROOT/bin:$PATH
 while read line; do
-    echo "-----> Running: go get -d -u $p"
+    echo "-----> Running: go get -d -u $line"
     go get -d -u $line
 done < $build/.godoc
 
 # Create executable
-echo "-----> Creating: $HOME/bin/web"
+echo "-----> Creating executable: $HOME/bin/web"
 mkdir -p $build/bin
 echo '#!/bin/bash' > $build/bin/web
 echo 'godoc -http=:$PORT' >> $build/bin/web
