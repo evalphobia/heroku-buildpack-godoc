@@ -1,6 +1,18 @@
 # Heroku Buildpack: Godoc
 
-Much of this code has been copied and stripped down from the very helpful [heroku-buildpack-go](https://github.com/kr/heroku-buildpack-go) project.
+*Much of this code has been copied and stripped down from the very 
+helpful [heroku-buildpack-go](https://github.com/kr/heroku-buildpack-go) project.*
+
+This buildpack lets you run a godoc http server on Heroku.
+
+The buildpack will detect your repository as a godoc server if it contains a 
+`.godoc` hidden file. The `.godoc` file should list at least one go-gettable package.
+
+The buildpack will compile a small executable named `web` that will be used indirectly to launch 
+the godoc http server. Thus, your Procfile must contain a `web: web` line.
+
+By default, the buildpack will download and use go1.3. You may override go the version 
+by setting the GOVERSION var: `$ heroku config:set GOVERSION=1.2.1`
 
 ## Example
 
@@ -42,15 +54,4 @@ Total 2 (delta 1), reused 0 (delta 0)
 -----> Launching... done, v6
        http://stinky-poop-3607.herokuapp.com/ deployed to Heroku
 ```
-
-The buildpack will detect your repository as a godoc server if it contains a `.godoc` hidden file.
-
-The `.godoc` file should list at least one go gettable package.
-
-The buildpack will compile a small executable named `web` that will be used indirectly to launch 
-the godoc http server. Thus, your Procfile must contain a `web: web` line.
-
-By default, the buildpack will download and use go1.3. You may override the version by configuring GOVERSION:
-
-`$ heroku config:set GOVERSION=1.2.1`
 
