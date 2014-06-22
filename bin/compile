@@ -11,33 +11,40 @@ for key in GOVERSION; do
   [ -f $envdir/$key ] && export "$key=$(cat $envdir/$key)"
 done
 
+# Python
 buildpack=$(dirname $(dirname $0))
 arch=$(uname -m|tr A-Z a-z)
 if test $arch = x86_64
 then arch=amd64
 fi
 plat=$(uname|tr A-Z a-z)-$arch
-
-# Python
 venv=$cache/venv
 mkdir -p $cache/pip
 python=python2.7
 PATH=$buildpack/$plat/bin:$venv/bin:$PATH
 
+virtualenv() {
+  python "$buildpack/vendor/virtualenv-1.7/virtualenv.py" "$@"
+}
+
 # VCS
 if ! (which hg >/dev/null && which bzr >/dev/null)
 then
     echo -n "       Installing Virtualenv..."
-    virtualenv --python $python --distribute --never-download --prompt='(venv) ' $venv > /dev/null 2>&1
+    virtualenv --python $python --distribute --never-download --prompt='(venv) ' $venv > /dev/null 2>&1 
+    echo -n "."
     . $venv/bin/activate > /dev/null 2>&1
+    echo -n "."
     echo " done"
 
     echo -n "       Installing Mercurial..."
     pip install mercurial > /dev/null 2>&1
+    echo -n "."
     echo " done"
 
     echo -n "       Installing Bazaar..."
     pip install bzr > /dev/null 2>&1
+    echo -n "."
     echo " done"
 fi
 
@@ -60,11 +67,14 @@ else
         gourl=https://storage.googleapis.com/golang/$file
         ;;
     esac
-    echo -n "-----> Installing $gourl"
+    echo -n "-----> Installing $gourl..."
     curl -sO $gourl
+    echo -n "."
     tar zxf $file
+    echo -n "."
     rm -f $file
-    echo    "       done"
+    echo -n "."
+    echo    " done"
 fi
 
 # If GOROOT is in the project root then godoc will fail so
@@ -80,9 +90,9 @@ cp -R $cache/$goversion/go/* $GOROOT
 # Get repos to document
 unset GIT_DIR # unset git dir or it will mess with goinstall
 PATH=$GOROOT/bin:$PATH
-while read p; do
+while read line; do
     echo "-----> Running: go get -d -u $p"
-    go get -d -u $p
+    go get -d -u $line
 done < $build/.godoc
 
 # Create executable
