@@ -98,11 +98,11 @@ while read -r || [[ -n "$REPLY" ]]; do
 done < $build/.godoc
 
 # Create executable
-echo "-----> Creating executable: $HOME/bin/web"
+echo "-----> Creating executable: $HOME/bin/godoc"
 mkdir -p $build/bin
-echo '#!/bin/bash' > $build/bin/web
-echo 'godoc -http=:8080' >> $build/bin/web
-chmod +x $build/bin/web
+echo '#!/bin/bash' > $build/bin/godoc
+echo 'godoc -http=:8080' >> $build/bin/godoc
+chmod +x $build/bin/godoc
 
 # Set up app env
 mkdir -p $build/.profile.d
