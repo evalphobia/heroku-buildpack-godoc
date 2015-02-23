@@ -6,5 +6,7 @@ if test -f $1/.godoc
 then echo Godoc
 else
   echo >&2 " !     A .godoc is required."
+  echo >&2 "PWD=$PWD"
+  echo >&2 '$1='"$1"
   echo no; exit 1
 fi
