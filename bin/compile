@@ -101,7 +101,7 @@ done < $build/.godoc
 echo "-----> Creating executable: $HOME/bin/web"
 mkdir -p $build/bin
 echo '#!/bin/bash' > $build/bin/web
-echo 'godoc -http=:$PORT' >> $build/bin/web
+echo 'godoc -http=:8080' >> $build/bin/web
 chmod +x $build/bin/web
 
 # Set up app env
