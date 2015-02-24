@@ -87,6 +87,9 @@ mkdir -p $GOROOT
 cp -R $cache/$goversion/go/* $GOROOT
 
 
+echo "GOPATH = $GOPATH"
+echo "GOROOT = $GOROOT"
+
 # Get repos to document
 unset GIT_DIR # unset git dir or it will mess with goinstall
 PATH=$GOROOT/bin:$PATH
