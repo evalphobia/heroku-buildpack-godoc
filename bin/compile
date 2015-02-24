@@ -50,7 +50,7 @@ fi
 
 
 # Go
-goversion=go${GOVERSION:-1.3}
+goversion=go${GOVERSION:-1.4}
 if test -d $cache/$goversion/go
 then
     echo    "-----> Using $goversion (Specify a different goversion with GOVERSION=1.x)"
@@ -97,11 +97,16 @@ while read -r || [[ -n "$REPLY" ]]; do
     fi
 done < $build/.godoc
 
+# fetch godoc
+godocpath='evalphobia/godoc-auth'
+go get github.com/$godocpath
+(cd $GOPATH/src/$godocpath; go build)
+
 # Create executable
 echo "-----> Creating executable: $HOME/bin/godoc"
 mkdir -p $build/bin
 echo '#!/bin/bash' > $build/bin/godoc
-echo 'godoc -http=:8080' >> $build/bin/godoc
+echo '$GOPATH/src/$godocpath/godoc-auth -http=:$PORT' >> $build/bin/godoc
 chmod +x $build/bin/godoc
 
 # Set up app env
